@@ -39,9 +39,17 @@ def agent_moj_net(obs, config):
     with open("net1", "rb") as f:
         net1 = pickle.load(f)    
     output1 = net1.activate(board)
-    print(output1)
     
     valid_moves = [col for col in range(config.columns) if obs.board[col] == 0]
+
+    while(valid_moves != []):
+        max_value = max(output1)
+        max_index = output1.index(max_value)
+        if max_index in valid_moves:
+            print(max_index)
+            return max_index
+        else:
+            output1 = output1.remove(max(output1))
     return random.choice(valid_moves)
     
 
@@ -53,7 +61,7 @@ def run_neat(config):
     p.add_reporter(stats)
     p.add_reporter(neat.Checkpointer(1))
 
-    winner = p.run(eval_genomes, 2)
+    winner = p.run(eval_genomes, 1)
     #with open("best.pickle", "wb") as f:
     #    pickle.dump(winner, f)
 
@@ -85,6 +93,6 @@ if __name__ == "__main__":
     
     env = make("connectx", debug=True)
     env.run([agent_moj_net, "random"])
-    #gra = env.render(mode="ansi")
-    #print(gra)
+    gra = env.render(mode="ansi")
+    print(gra)
 
