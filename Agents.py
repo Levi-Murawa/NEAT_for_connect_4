@@ -34,7 +34,6 @@ def agent_moj_net1(obs, config):
         max_value = max(output1)
         max_index = output1.index(max_value)
         if max_index in valid_moves:
-            print(max_index)
             return max_index
         else:
             output1[max_index] = -1
@@ -58,7 +57,6 @@ def agent_moj_net2(obs, config):
         max_value = max(output2)
         max_index = output2.index(max_value)
         if max_index in valid_moves:
-            print(max_index)
             return max_index
         else:
             output2[max_index] = -1
