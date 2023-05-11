@@ -5,19 +5,26 @@ import os
 import pickle
 import time
 import random
+import visualize
+
 start_time = time.time()
 def run_neat(config):
-    #p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-7')
-    p = neat.Population(config)
+    p = neat.Checkpointer.restore_checkpoint('Neat_checkpoint_first_try/neat-checkpoint-41')
+    #p = neat.Population(config)
     p.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
-    p.add_reporter(neat.Checkpointer(1))
+    p.add_reporter(neat.Checkpointer(5))
 
     #print("Wejscie do treningu:", time.time() - start_time)
     winner = p.run(eval_genomes, 1)
-    with open("best.pickle", "wb") as f:
+    with open("best_41.pickle", "wb") as f:
         pickle.dump(winner, f)
+
+    #visualize.draw_net(config, winner, True)
+    #visualize.draw_net(config, winner, True, prune_unused=True)
+    #visualize.plot_stats(stats, ylog=False, view=True)
+    #visualize.plot_species(stats, view=True)
 
 
 def eval_genomes(genomes, config):
@@ -46,7 +53,7 @@ def train_ai(genome1, genome2, config):
     #print("Początek meczu:", time.time() - start_time)
     #env = make("connectx", debug=True)
     #env.run([agent_moj_net1, agent_moj_net2])
-    (a, b) = eval_std([agent_moj_net1, agent_moj_net2], 3)
+    (a, b) = eval_std([agent_moj_net1, agent_moj_net2], 6)
     #print("Koniec meczu:", time.time() - start_time)
     genome1.fitness += a
     genome2.fitness += b
@@ -62,16 +69,19 @@ def eval_std(agent = ["random","random"],num=50):
     return(ag1, ag2)
 
 
-if __name__ == "__main__":
+def NEAT_learn():
     local_dir = os.path.dirname(__file__)
     config_path = os.path.join(local_dir, "config.txt")
     config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
                          neat.DefaultSpeciesSet, neat.DefaultStagnation,
                          config_path)
     run_neat(config)
-    
+
+
+if __name__ == "__main__":
+    NEAT_learn()
     env = make("connectx", debug=True)
-    env.run([agent_moj_net1, agent_moj_net2])
+    env.run([agent_moj_net1, "random"])
     gra = env.render(mode="ansi")
     print(gra)
 
